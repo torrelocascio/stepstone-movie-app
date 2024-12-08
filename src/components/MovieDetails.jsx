@@ -62,7 +62,7 @@ const MovieDetails = () => {
     <div className="md:container mx-auto min-h-screen bg-gray-900 text-white p-6 flex flex-col items-center">
       {/* Back Button with Icon */}
       <button
-        onClick={() => navigate("/")}
+        onClick={() => window.history.state && window.history.state.idx > 0 ? navigate(-1) : navigate("/")}
         className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 mb-6"
       >
         <FaArrowLeft className="mr-2" /> {/* Icon with margin */}

@@ -11,6 +11,7 @@ const MovieSearch = () => {
   const [error, setError] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
+  const [groupedByCategory, setGroupedByCategory] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
@@ -67,6 +68,50 @@ const MovieSearch = () => {
     setSearchParams({ query, page: newPage });
   };
 
+  const renderMoviesByCategory = () => {
+    if (!movies.length) return null;
+
+    const genresMap = {};
+    movies.forEach((movie) => {
+      if (movie.genre_ids) {
+        movie.genre_ids.forEach((genreId) => {
+          if (!genresMap[genreId]) {
+            genresMap[genreId] = [];
+          }
+          genresMap[genreId].push(movie);
+        });
+      }
+    });
+
+    // Mock genre names for simplicity
+    const genreNames = {
+      28: "Action",
+      12: "Adventure",
+      16: "Animation",
+      35: "Comedy",
+      18: "Drama",
+      27: "Horror",
+      878: "Science Fiction",
+    };
+
+    return (
+      <div className="w-full max-w-5xl">
+        {Object.keys(genresMap).map((genreId) => (
+          <div key={genreId} className="mb-6">
+            <h2 className="text-2xl font-bold text-blue-400 mb-4">
+              {genreNames[genreId] || "Other"}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {genresMap[genreId].map((movie) => (
+                <MovieCard key={movie.id} movie={movie} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="container mx-auto flex flex-col items-center p-6 bg-gray-900 min-h-screen text-white">
       {/* Search Form */}
@@ -85,19 +130,36 @@ const MovieSearch = () => {
           />
           <button
             type="submit"
+            id="search-movies-button"
             className="bg-blue-600 px-6 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
           >
             Search
           </button>
         </form>
 
-        {/* Show total results only if a query exists */}
+        {/* Show total results and categories only if a query exists */}
         {query && (
           <p className="text-gray-400">
             Found{" "}
             <span className="text-blue-400 font-bold">{totalResults}</span>{" "}
-            result{totalResults === 1 ? "" : "s"}
+            result{totalResults === 1 ? "" : "s"} in various categories.
           </p>
+        )}
+
+        {movies.length > 0 && (
+          <>
+            <button
+              onClick={() => setGroupedByCategory((prev) => !prev)}
+              className="mt-4 bg-green-600 px-6 py-2 rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500"
+            >
+              {groupedByCategory ? "View In List" : "View By Categories"}
+            </button>
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </>
         )}
       </div>
 
@@ -109,16 +171,15 @@ const MovieSearch = () => {
         <div className="w-full max-w-5xl mt-6">
           {movies.length > 0 ? (
             <>
-              <Pagination
-                currentPage={page}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {movies.map((movie) => (
-                  <MovieCard key={movie.id} movie={movie} />
-                ))}
-              </div>
+              {groupedByCategory ? (
+                renderMoviesByCategory()
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {movies.map((movie) => (
+                    <MovieCard key={movie.id} movie={movie} />
+                  ))}
+                </div>
+              )}
               <Pagination
                 currentPage={page}
                 totalPages={totalPages}
