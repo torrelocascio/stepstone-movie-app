@@ -9,7 +9,6 @@ const MovieSearch = () => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [totalPages, setTotalPages] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
   const [groupedByCategory, setGroupedByCategory] = useState(false);
 
@@ -24,6 +23,8 @@ const MovieSearch = () => {
     },
   };
 
+  const moviesPerPage = 10;
+
   const fetchMovies = async () => {
     if (!query.trim()) {
       setMovies([]);
@@ -34,12 +35,13 @@ const MovieSearch = () => {
     setError(null);
 
     try {
+      const apiPage = Math.ceil(page / 2);
+
       const response = await axios.get(
-        `${API_URL}?query=${query}&page=${page}`,
+        `${API_URL}?query=${query}&page=${apiPage}`,
         AUTH_HEADER
       );
       setMovies(response.data.results);
-      setTotalPages(response.data.total_pages);
       setTotalResults(response.data.total_results);
     } catch (err) {
       setError("Failed to fetch movies. Please try again.");
@@ -68,22 +70,36 @@ const MovieSearch = () => {
     setSearchParams({ query, page: newPage });
   };
 
+  // Divide the movies array locally into halves if total results > 10
+  const halfMovies = Math.ceil(movies.length / 2);
+  const currentMovies =
+    totalResults > 10
+      ? page % 2 === 1
+        ? movies.slice(0, halfMovies) // First half for odd pages
+        : movies.slice(halfMovies) // Second half for even pages
+      : movies; // Show all movies if 10 or fewer results
+
   const renderMoviesByCategory = () => {
-    if (!movies.length) return null;
+    if (!currentMovies.length) return null;
 
-    const genresMap = {};
-    movies.forEach((movie) => {
-      if (movie.genre_ids) {
+    const genresMap = currentMovies.reduce((map, movie) => {
+      if (movie.genre_ids && movie.genre_ids.length > 0) {
         movie.genre_ids.forEach((genreId) => {
-          if (!genresMap[genreId]) {
-            genresMap[genreId] = [];
+          if (!map[genreId]) {
+            map[genreId] = [];
           }
-          genresMap[genreId].push(movie);
+          map[genreId].push(movie);
         });
+      } else {
+        // Handle movies with no genres
+        if (!map["noGenre"]) {
+          map["noGenre"] = [];
+        }
+        map["noGenre"].push(movie);
       }
-    });
+      return map;
+    }, {});
 
-    // Mock genre names for simplicity
     const genreNames = {
       28: "Action",
       12: "Adventure",
@@ -92,6 +108,7 @@ const MovieSearch = () => {
       18: "Drama",
       27: "Horror",
       878: "Science Fiction",
+      noGenre: "No Genre",
     };
 
     return (
@@ -114,7 +131,6 @@ const MovieSearch = () => {
 
   return (
     <div className="container mx-auto flex flex-col items-center p-6 bg-gray-900 min-h-screen text-white">
-      {/* Search Form */}
       <div className="w-full max-w-2xl text-center">
         <h1 className="text-3xl font-bold mb-6">Movie Search</h1>
         <form
@@ -137,12 +153,11 @@ const MovieSearch = () => {
           </button>
         </form>
 
-        {/* Show total results and categories only if a query exists */}
         {query && (
           <p className="text-gray-400">
             Found{" "}
             <span className="text-blue-400 font-bold">{totalResults}</span>{" "}
-            result{totalResults === 1 ? "" : "s"} in various categories.
+            result{totalResults === 1 ? "" : "s"}.
           </p>
         )}
 
@@ -154,35 +169,29 @@ const MovieSearch = () => {
             >
               {groupedByCategory ? "View In List" : "View By Categories"}
             </button>
-            <Pagination
-              currentPage={page}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
           </>
         )}
       </div>
 
-      {/* Results Section */}
       {loading && <Spinner />}
       {error && <div className="text-red-500 text-center mb-6">{error}</div>}
 
       {!loading && !error && query && (
         <div className="w-full max-w-5xl mt-6">
-          {movies.length > 0 ? (
+          {currentMovies.length > 0 ? (
             <>
               {groupedByCategory ? (
                 renderMoviesByCategory()
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {movies.map((movie) => (
+                  {currentMovies.map((movie) => (
                     <MovieCard key={movie.id} movie={movie} />
                   ))}
                 </div>
               )}
               <Pagination
                 currentPage={page}
-                totalPages={totalPages}
+                totalPages={Math.ceil(totalResults / moviesPerPage)}
                 onPageChange={handlePageChange}
               />
             </>
