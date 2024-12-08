@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa"; // Import Font Awesome icon
 import axios from "axios";
+import Spinner from "./Spinner";
 
 const MovieDetails = () => {
   const { id } = useParams();
@@ -51,7 +52,7 @@ const MovieDetails = () => {
   };
 
   if (loading) {
-    return <div className="text-center text-white mt-10">Loading...</div>;
+    return <Spinner/>;
   }
 
   if (error) {
