@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
+import { useParams, useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa"; // Import Font Awesome icon
 import axios from "axios";
 
 const MovieDetails = () => {
-  const { id } = useParams(); // Get movie ID from the URL
-  const navigate = useNavigate(); // Initialize navigate function
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [owned, setOwned] = useState(false);
 
   const API_URL = `https://api.themoviedb.org/3/movie/${id}`;
   const AUTH_HEADER = {
@@ -31,6 +33,23 @@ const MovieDetails = () => {
     fetchMovieDetails();
   }, [id]);
 
+  useEffect(() => {
+    const ownedMovies = JSON.parse(localStorage.getItem("ownedMovies")) || [];
+    setOwned(ownedMovies.includes(Number(id)));
+  }, [id]);
+
+  const toggleOwned = () => {
+    const ownedMovies = JSON.parse(localStorage.getItem("ownedMovies")) || [];
+    if (owned) {
+      const updatedOwnedMovies = ownedMovies.filter((movieId) => movieId !== Number(id));
+      localStorage.setItem("ownedMovies", JSON.stringify(updatedOwnedMovies));
+    } else {
+      ownedMovies.push(Number(id));
+      localStorage.setItem("ownedMovies", JSON.stringify(ownedMovies));
+    }
+    setOwned(!owned);
+  };
+
   if (loading) {
     return <div className="text-center text-white mt-10">Loading...</div>;
   }
@@ -41,11 +60,12 @@ const MovieDetails = () => {
 
   return (
     <div className="md:container mx-auto min-h-screen bg-gray-900 text-white p-6 flex flex-col items-center">
-      {/* Back Button */}
+      {/* Back Button with Icon */}
       <button
-        onClick={() => navigate("/")} // Navigate to the previous page
-        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 mb-6"
+        onClick={() => navigate("/")}
+        className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 mb-6"
       >
+        <FaArrowLeft className="mr-2" /> {/* Icon with margin */}
         Back to Search
       </button>
 
@@ -79,6 +99,16 @@ const MovieDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* Mark as Owned Button */}
+      <button
+        onClick={toggleOwned}
+        className={`mt-6 px-4 py-2 rounded ${
+          owned ? "bg-green-600 text-white" : "bg-gray-700 text-gray-300"
+        } transition-all duration-200 hover:bg-green-500 hover:text-white`}
+      >
+        {owned ? "Owned" : "Mark as Owned"}
+      </button>
     </div>
   );
 };

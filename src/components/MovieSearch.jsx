@@ -74,14 +74,14 @@ const MovieSearch = () => {
         <h1 className="text-3xl font-bold mb-6">Movie Search</h1>
         <form
           onSubmit={handleSearch}
-          className="block sm:flex items-center sm:space-x-2 space-y-4 sm:space-y-0 mb-4 gap-x-4"
+          className="block flex items-center sm:space-x-2 justify-center flex-wrap sm:space-y-0 mb-4 gap-2"
         >
           <input
             type="text"
             name="query"
             defaultValue={query}
             placeholder="Search for a movie..."
-            className="flex-grow bg-gray-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="min-w-[300px] flex-grow bg-gray-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             type="submit"
@@ -114,7 +114,7 @@ const MovieSearch = () => {
                 totalPages={totalPages}
                 onPageChange={handlePageChange}
               />
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {movies.map((movie) => (
                   <MovieCard key={movie.id} movie={movie} />
                 ))}
