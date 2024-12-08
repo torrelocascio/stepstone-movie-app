@@ -8,7 +8,7 @@ Here's the updated README with a section for using `nvm` if installation errors 
 
 # **Movie Search App**
 
-A React-based movie search application that allows users to search for movies, view details, and group search results by categories. The app integrates with [The Movie Database (TMDb) API](https://developers.themoviedb.org/) to fetch movie data.
+A React-based, Tailwind Styled, and Vite configuration movie search application that allows users to search for movies, view details, and group search results by categories. The app integrates with [The Movie Database (TMDb) API](https://developers.themoviedb.org/) to fetch movie data.
 
 ---
 
@@ -49,7 +49,7 @@ If you encounter errors during installation or while running the app, it's likel
 
 ### **1. Clone the Repository**
 ```bash
-git clone <repository-url>
+git clone git@github.com:torrelocascio/stepstone-movie-app.git
 cd movie-search-app
 ```
 
