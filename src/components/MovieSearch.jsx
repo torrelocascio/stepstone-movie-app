@@ -15,7 +15,7 @@ const MovieSearch = () => {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
-  const page = parseInt(searchParams.get("page"), 10) || 1;
+  const page = parseInt(searchParams.get("page")) || 1;
 
   const API_URL = "https://api.themoviedb.org/3/search/movie";
   const AUTH_HEADER = {
