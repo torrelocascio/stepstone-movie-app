@@ -1,3 +1,7 @@
+Here's the updated README with a section for using `nvm` if installation errors occur:
+
+---
+
 ### README for Movie Search App
 
 ---
@@ -14,6 +18,34 @@ A React-based movie search application that allows users to search for movies, v
 Ensure you have the following installed on your machine:
 - [Node.js](https://nodejs.org/) (version 16 or later)
 - [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+
+#### **Using `nvm` for Node Version Management**
+If you encounter errors during installation or while running the app, it's likely due to an incompatible Node.js version. Use [`nvm`](https://github.com/nvm-sh/nvm) to switch to the required Node.js version.
+
+**Steps to Use `nvm`:**
+1. Check if you have `nvm` installed:
+   ```bash
+   nvm --version
+   ```
+   If not installed, follow the [nvm installation guide](https://github.com/nvm-sh/nvm#installing-and-updating).
+
+2. Use the recommended Node.js version:
+   ```bash
+   nvm use
+   ```
+   This will use the Node.js version specified in the `.nvmrc` file in the project. If you don't have this version installed, `nvm` will prompt you to install it.
+
+3. Verify the Node.js version:
+   ```bash
+   node -v
+   ```
+
+4. Retry installation:
+   ```bash
+   npm install
+   ```
+
+---
 
 ### **1. Clone the Repository**
 ```bash
@@ -50,7 +82,6 @@ yarn dev
 
 The app will run at `http://localhost:5173/` by default.
 
----
 
 ## **Running Tests**
 
@@ -135,5 +166,3 @@ If you'd like to contribute to this project:
 This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 ---
-
-Let me know if you need more details or adjustments for the README!
