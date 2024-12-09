@@ -16,7 +16,7 @@ A React-based, Tailwind Styled, and Vite configuration movie search application 
 
 ### Prerequisites
 Ensure you have the following installed on your machine:
-- [Node.js](https://nodejs.org/) (version 16 or later)
+- [Node.js](https://nodejs.org/) (version 18 or later)
 - [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 
 #### **Using `nvm` for Node Version Management**
